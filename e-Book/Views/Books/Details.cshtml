@@ -1,0 +1,120 @@
+﻿@Model Books
+
+
+@{
+    ViewData["Tittle"] = "Book details";
+}
+<div class="row">
+        <div class="col-md-6 offset-3">
+            <div class="card mb-12">
+                <div class="row g-0">
+                    <div class="col-md-12">
+                        <div class="card-header text-white bg-info">
+                            <p class="card-text">
+                                <h5 class="card-title">
+                                    @Model.Name
+                                </h5>
+                            </p>
+                        </div>
+                    </div>
+                    <div class="col-md-6 ">
+                        <img src="@Model.ImageURL" width=60% alt="@Model.Name">
+                    </div>
+
+                <div class="col-md-6">
+                        <dic class="card-body">
+                        <p class="card-text"> <b>Description: </b>@Model.Description</p>
+                            <p class="card-text">
+                                <b>Publishing House: </b>
+                            <a asp-controller="Publishing_House" asp-action="Details" asp-route-id="@Model.Publishing_House.ID">
+                                @Model.Publishing_House.Name
+                                </a>
+                            </p>
+                            <p class="card-text"><b>Category: </b>@Model.BookCategory</p>
+                            <p class="card-text"><b>Start date: </b>@Model.StartDate.ToString("dd MMM yy")</p>
+                        
+                            <p class="card-text">
+                                <b>Status:</b>
+                                @if (DateTime.Now >= Model.StartDate && DateTime.Now <= Model.EndDate)
+                                {
+                                    <samp class="badge bg-success text-white">AVAILABLE</samp>
+                                }
+                                else if (DateTime.Now >= Model.EndDate)
+                                {
+                                    <samp class="badge bg-danger text-white">EXPIRED</samp>
+                                }
+                                else
+                                {
+                                    <samp class="badge bg-primary text-white">UPCOMING</samp>
+                                }
+                            </p>
+                             
+                            </p>
+
+                        </dic>
+                    </div>
+                <div class="row">
+                     <div class="col-md-12">
+                        <p class="card-text">
+                            <b>Authors: </b>
+                            <hr />
+                            @foreach (var author in Model.Author_Book)
+                            {
+                                <div class="column text-center">
+                                    <img class="border-info rounded-circle" src="@author.Authors.ProfilePicture" style="max-width:150px" />
+                                    <a asp-controller="Authors" asp-action="Details" asp-route-id="@author.AuthorID">@author.Authors.FullName</a>
+                                </div>
+                            }
+                       </>
+                     </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <p class="card-text">
+                            
+                            <b>Coments: </b>
+                            <hr />
+                            @if (Model.Coments != null)
+                            {
+                                <div class="row">
+                                    @foreach (var coment in Model.Coments)
+                                    {
+                                        <div class="column text-left">
+                                            <p class="card-text"> <b>@coment.FullName</b><b>:</b> @coment.Comment   </p>
+                                            <p>@coment.CommentedOn
+                                                <form asp-action="DeleteConfirmed">
+                                                    <input type="hidden" name="id" value="@coment.ID" />
+                                                    <button class="btn btn-danger" type="submit">Delete</button>
+                                                </form>
+                                            </p>
+                                        </div>
+                                    }
+                                </div>
+                            }
+                        </p>
+                    </div>
+                </div>
+                <div class="row">
+                    <p class="card-text">
+                        <form method="post" asp-action="AddComet">
+                            <div class="form-group">
+                                <label for="Comment">Comment:</label>
+                                <input type="text" class="form-control" id="Comment" name="Comment" />
+                            </div>
+                            <div class="form-group">
+                                <input type="hidden" name="BookID" value="@Model.ID" />
+                            </div>
+                            <button type="submit" class="btn btn-outline-success float-right">Add Coment</button>
+                            <a class="btn btn-outline-primary float-right" asp-action="Index">
+                                Back to List
+                            </a>
+                            <a class="btn btn-success text-white"
+                               asp-controller="Orders" asp-action="AddItemToShoppingCart" asp-route-id="Model.ID">
+                                <i class="bi bi-cart-plus"></i> Add to Cart (Price Model.Price.ToString("c"))
+                            </a>
+                        </form>
+                    </p>
+                </div>
+            </div>
+        </div>
+</div>
